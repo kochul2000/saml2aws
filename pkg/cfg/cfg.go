@@ -65,7 +65,8 @@ type IDPAccount struct {
 	DisableSessions       bool   `ini:"disable_sessions"`             // used by Okta
 	DownloadBrowser       bool   `ini:"download_browser_driver"`      // used by browser
 	BrowserDriverDir      string `ini:"browser_driver_dir,omitempty"` // used by browser; hide from user if not set
-	Headless              bool   `ini:"headless"`                     // used by browser
+	Headless              bool   `ini:"headless"`                        // used by browser
+	BrowserUserDataDir    string `ini:"browser_user_data_dir,omitempty"` // used by localbrowser; the Chrome user data directory for reusing sessions
 	Prompter              string `ini:"prompter"`
 	KCAuthErrorMessage    string `ini:"kc_auth_error_message,omitempty"` // used by KeyCloak; hide from user if not set
 	KCAuthErrorElement    string `ini:"kc_auth_error_element,omitempty"` // used by KeyCloak; hide from user if not set
@@ -139,7 +140,7 @@ func (ia *IDPAccount) Validate() error {
 		return errors.New("Provider empty in idp account")
 	}
 
-	if ia.Provider != "Browser" {
+	if ia.Provider != "Browser" && ia.Provider != "LocalBrowser" {
 		if ia.MFA == "" {
 			return errors.New("MFA empty in idp account")
 		}

@@ -17,6 +17,7 @@ import (
 	"github.com/versent/saml2aws/v2/pkg/provider/googleapps"
 	"github.com/versent/saml2aws/v2/pkg/provider/jumpcloud"
 	"github.com/versent/saml2aws/v2/pkg/provider/keycloak"
+	"github.com/versent/saml2aws/v2/pkg/provider/localbrowser"
 	"github.com/versent/saml2aws/v2/pkg/provider/netiq"
 	"github.com/versent/saml2aws/v2/pkg/provider/okta"
 	"github.com/versent/saml2aws/v2/pkg/provider/onelogin"
@@ -51,6 +52,7 @@ var MFAsByProvider = ProviderList{
 	"ShibbolethECP": []string{"auto", "phone", "push", "passcode"},
 	"NetIQ":         []string{"Auto", "Privileged"},
 	"Browser":       []string{"Auto"},
+	"LocalBrowser":  []string{"Auto"},
 	"Auth0":         []string{"Auto"},
 }
 
@@ -187,6 +189,8 @@ func NewSAMLClient(idpAccount *cfg.IDPAccount) (SAMLClient, error) {
 		return netiq.New(idpAccount, idpAccount.MFA)
 	case "Browser":
 		return browser.New(idpAccount)
+	case "LocalBrowser":
+		return localbrowser.New(idpAccount)
 	case "Auth0":
 		if invalidMFA(idpAccount.Provider, idpAccount.MFA) {
 			return nil, fmt.Errorf("Invalid MFA type: %v for %v provider", idpAccount.MFA, idpAccount.Provider)
