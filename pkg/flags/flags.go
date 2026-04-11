@@ -40,6 +40,7 @@ type CommonFlags struct {
 	DisableSessions       bool
 	Prompter              string
 	KCBroker              string
+	BrowserProfileDir  string
 }
 
 // LoginExecFlags flags for the Login / Exec commands
@@ -155,5 +156,8 @@ func ApplyFlagOverrides(commonFlags *CommonFlags, account *cfg.IDPAccount) {
 	// select the prompter
 	if commonFlags.Prompter != "" {
 		account.Prompter = commonFlags.Prompter
+	}
+	if commonFlags.BrowserProfileDir != "" {
+		account.BrowserProfileDir = commonFlags.BrowserProfileDir
 	}
 }

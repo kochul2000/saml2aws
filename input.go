@@ -53,6 +53,8 @@ func PromptForConfigurationDetails(idpAccount *cfg.IDPAccount) error {
 	case "AzureAD":
 		idpAccount.AppID = prompter.String("App ID", idpAccount.AppID)
 		log.Println("")
+	case "PersistentBrowser":
+		idpAccount.BrowserProfileDir = prompter.String("Browser Profile Dir (leave empty for default)", idpAccount.BrowserProfileDir)
 	}
 
 	return nil

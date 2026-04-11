@@ -1,8 +1,6 @@
 module github.com/versent/saml2aws/v2
 
-go 1.21.0
-
-toolchain go1.22.5
+go 1.26
 
 require (
 	github.com/99designs/keyring v1.2.2
@@ -57,7 +55,7 @@ require (
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/crypto v0.31.0 // indirect
 	golang.org/x/exp v0.0.0-20240506185415-9bf2ced13842 // indirect
-	golang.org/x/sys v0.28.0 // indirect
+	golang.org/x/sys v0.42.0 // indirect
 	golang.org/x/term v0.27.0 // indirect
 	golang.org/x/text v0.21.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect

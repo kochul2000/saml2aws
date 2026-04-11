@@ -13,6 +13,7 @@ import (
 	"github.com/versent/saml2aws/v2/pkg/provider/auth0"
 	"github.com/versent/saml2aws/v2/pkg/provider/authentik"
 	"github.com/versent/saml2aws/v2/pkg/provider/browser"
+	"github.com/versent/saml2aws/v2/pkg/provider/persistentbrowser"
 	"github.com/versent/saml2aws/v2/pkg/provider/f5apm"
 	"github.com/versent/saml2aws/v2/pkg/provider/googleapps"
 	"github.com/versent/saml2aws/v2/pkg/provider/jumpcloud"
@@ -50,7 +51,8 @@ var MFAsByProvider = ProviderList{
 	"Akamai":        []string{"Auto", "DUO", "SMS", "EMAIL", "TOTP"},
 	"ShibbolethECP": []string{"auto", "phone", "push", "passcode"},
 	"NetIQ":         []string{"Auto", "Privileged"},
-	"Browser":       []string{"Auto"},
+	"Browser":        []string{"Auto"},
+	"PersistentBrowser": []string{"Auto"},
 	"Auth0":         []string{"Auto"},
 }
 
@@ -187,6 +189,8 @@ func NewSAMLClient(idpAccount *cfg.IDPAccount) (SAMLClient, error) {
 		return netiq.New(idpAccount, idpAccount.MFA)
 	case "Browser":
 		return browser.New(idpAccount)
+	case "PersistentBrowser":
+		return persistentbrowser.New(idpAccount)
 	case "Auth0":
 		if invalidMFA(idpAccount.Provider, idpAccount.MFA) {
 			return nil, fmt.Errorf("Invalid MFA type: %v for %v provider", idpAccount.MFA, idpAccount.Provider)

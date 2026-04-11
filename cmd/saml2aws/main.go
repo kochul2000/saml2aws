@@ -92,6 +92,7 @@ func main() {
 	app.Flag("region", "AWS region to use for API requests, e.g. us-east-1, us-gov-west-1, cn-north-1 (env: SAML2AWS_REGION)").Envar("SAML2AWS_REGION").Short('r').StringVar(&commonFlags.Region)
 	app.Flag("prompter", "The prompter to use for user input (default, pinentry)").StringVar(&commonFlags.Prompter)
 	app.Flag("kc-broker", "The kc broker to use when authenticating via keycloak").StringVar(&commonFlags.KCBroker)
+	app.Flag("browser-profile-dir", "Persistent browser profile directory for PersistentBrowser provider. (env: SAML2AWS_BROWSER_PROFILE_DIR)").Envar("SAML2AWS_BROWSER_PROFILE_DIR").StringVar(&commonFlags.BrowserProfileDir)
 
 	// `configure` command and settings
 	cmdConfigure := app.Command("configure", "Configure a new IDP account.")
