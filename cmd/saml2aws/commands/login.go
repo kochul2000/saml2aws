@@ -206,6 +206,9 @@ func resolveLoginDetails(account *cfg.IDPAccount, loginFlags *flags.LoginExecFla
 	loginDetails := &creds.LoginDetails{URL: account.URL, Username: account.Username, MFAToken: loginFlags.CommonFlags.MFAToken, DuoMFAOption: loginFlags.DuoMFAOption}
 
 	log.Printf("Using IdP Account %s to access %s %s", loginFlags.CommonFlags.IdpAccount, account.Provider, account.URL)
+	if account.Provider == "PersistentBrowser" {
+		log.Println("\033[36m\033[1mPersistent browser mode\033[0m: session will be saved and reused across logins.")
+	}
 
 	var err error
 	if !loginFlags.CommonFlags.DisableKeychain {
