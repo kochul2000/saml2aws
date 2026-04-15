@@ -136,24 +136,48 @@ var getSAMLResponse = func(page playwright.Page, loginDetails *creds.LoginDetail
 		return "", err
 	}
 
+	// Channel to signal when SAML response is captured during navigation.
+	// This handles the case where the user is already logged in and the IDP
+	// redirects through the SAML endpoint to the AWS console. Without this,
+	// page.Goto blocks waiting for the AWS console to fully load.
+	samlCaptured := make(chan struct{}, 1)
+
 	page.OnRequest(func(request playwright.Request) {
 		if signinRe.Match([]byte(request.URL())) {
 			data, dataErr = request.PostData()
+			select {
+			case samlCaptured <- struct{}{}:
+			default:
+			}
 		}
 	})
-	if _, err := page.Goto(loginDetails.URL); err != nil {
-		return "", err
-	}
 
-	if client.BrowserAutoFill {
-		err := autoFill(page, loginDetails)
-		if err != nil {
-			logger.Error("error when auto filling", err)
+	// Run navigation in a goroutine - it may block on redirects when already logged in
+	navDone := make(chan error, 1)
+	go func() {
+		_, err := page.Goto(loginDetails.URL)
+		navDone <- err
+	}()
+
+	// Wait for either SAML response capture or navigation to complete
+	select {
+	case <-samlCaptured:
+		logger.Info("SAML response captured during navigation (already logged in)")
+	case err := <-navDone:
+		if err != nil && data == "" {
+			return "", err
 		}
 	}
 
-	logger.Info("waiting for SAML response (complete login in browser if needed)...")
 	if data == "" {
+		if client.BrowserAutoFill {
+			err := autoFill(page, loginDetails)
+			if err != nil {
+				logger.Error("error when auto filling", err)
+			}
+		}
+
+		logger.Info("waiting for SAML response (complete login in browser if needed)...")
 		r, err := page.ExpectRequest(signinRe, nil, client.expectRequestTimeout())
 		if err != nil {
 			logger.Error(err)
